@@ -1,6 +1,8 @@
 <?php
 
-function registration($login, $password, $repeat_password) {
+session_start();
+
+function registration($login, $password, $repeat_password, $avatar) {
     if($password != $repeat_password) {
         return false;
     }
@@ -14,15 +16,21 @@ function registration($login, $password, $repeat_password) {
             }
         }
     }
+
+    $avatar = file_get_contents($avatar['tmp_name']);
+    $avatar = base64_encode($avatar);
+
+
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $user = [
         'username' => $login,
-        'password' => $hash
+        'password' => $hash,
+        'avatar' => $avatar
     ];
     $dataFromFile[] = $user;
     $json = json_encode($dataFromFile);
     file_put_contents('db.json', $json);
-    return true;
+    header('location: /login.php');
 }
 
 function login($login, $password) {
@@ -33,7 +41,8 @@ function login($login, $password) {
         foreach ($dataFromFile as $user) {
             if ($user->username == $login) {
                 if (password_verify($password, $user->password)) {
-                    header('location: https://yandex.ru');
+                    $_SESSION['avatar'] = $user->avatar;
+                    header('location: ./profile.php');
                 };
             }
         }
