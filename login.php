@@ -1,4 +1,6 @@
 <?php
+require "function.php";
+
 if (!empty($_POST['login'])){
     if (!empty($_POST['password'])){
         login($_POST['login'], $_POST['password']);

@@ -24,3 +24,18 @@ function registration($login, $password, $repeat_password) {
     file_put_contents('db.json', $json);
     return true;
 }
+
+function login($login, $password) {
+    $file = file_get_contents('db.json');
+    $dataFromFile = json_decode($file);
+
+    if (!empty($dataFromFile)) {
+        foreach ($dataFromFile as $user) {
+            if ($user->username == $login) {
+                if (password_verify($password, $user->password)) {
+                    header('location: https://yandex.ru');
+                };
+            }
+        }
+    }
+}
